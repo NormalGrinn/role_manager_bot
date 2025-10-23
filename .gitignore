@@ -1,0 +1,5 @@
+/target
+/databases
+key.json
+.env
+Cargo.lock
