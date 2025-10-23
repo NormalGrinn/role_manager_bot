@@ -7,14 +7,14 @@ const PATH: &str = "databases/categories.db";
 
 pub async fn add_cat(cat: &types::Category) -> Result<()> {
     const ADD_CATEGORY: &str = "
-    INSERT INTO categories (role_id, category_name, is_open, category_limit)
-    VALUES (?1, ?2, ?3, ?4);
+    INSERT INTO categories (role_id, category_name, is_open, category_limit, category_type)
+    VALUES (?1, ?2, ?3, ?4, ?5);
     ";
     let conn = Connection::open(PATH).map_err(|e| {
         eprintln!("Failed to open database: {}", e);
         e
     })?;
-    conn.execute(ADD_CATEGORY, params![cat.role_id, cat.category_name, cat.is_open, cat.category_limit]).map_err(|e| {
+    conn.execute(ADD_CATEGORY, params![cat.role_id, cat.category_name, cat.is_open, cat.category_limit, cat.category_type]).map_err(|e| {
         eprintln!("Problem adding category to database: {}", e);
         e
     })?;
@@ -52,6 +52,7 @@ pub async fn get_all_categories() -> Result<Vec<types::Category>> {
         category_name: row.get(1)?,
         is_open: row.get(2)?,
         category_limit: row.get(3)?,
+        category_type: row.get(4)?,
     })
     )?;
     let mut cats: Vec<types::Category> = Vec::new();

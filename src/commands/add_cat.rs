@@ -14,6 +14,8 @@ pub async fn add_cat(
     is_open: bool,
     #[description = "What is the cap of the category"]
     category_limit: u64,
+    #[description = "What is the type of the category"]
+    category_type: types::CategoryType,
 ) -> Result<(), Error> {
     // Check if the user executing the command is a host
     if !is_host(&ctx, ctx.author()).await? {return Ok(())}
@@ -22,7 +24,7 @@ pub async fn add_cat(
     .parse()
     .map_err(|_| poise::serenity_prelude::Error::Other("Invalid role ID".into()))?;
 
-    let cat =  types::Category { role_id, category_name, is_open, category_limit };
+    let cat =  types::Category { role_id, category_name, is_open, category_limit, category_type };
 
     match database::add_cat(&cat).await {
         Ok(_) => {

@@ -1,4 +1,4 @@
-use std::fs;
+use std::{env, fs};
 
 use google_sheets4::{yup_oauth2::{ServiceAccountAuthenticator, ServiceAccountKey}, Sheets};
 use poise::CreateReply;
@@ -11,6 +11,10 @@ pub async fn update(
 ) -> Result<(), Error> {
     // Check if the user executing the command is a host
     if !is_host(&ctx, ctx.author()).await? {return Ok(())}
+
+    let defer_reply = CreateReply::default().content("...Fetching data and updating the Google Sheet. This may take a moment...").ephemeral(true);
+    ctx.send(defer_reply).await?;
+
     let jurors: Vec<types::CategoryWithJurors>;
     match utils::get_cats_with_users(&ctx).await {
         Ok(j) => {
@@ -35,9 +39,10 @@ pub async fn update(
     }
 
     let spreadsheet_id = "1_T8UWoz_78ExJziMEsXF-7QC7q0URxyWVjaG1AxHXHM";
-    let range = "Blad1!A1";
+    let sheet_name = env::var("SHEET_NAME")
+    .expect("Missing `SHEET_NAME` env var, see README for more information.");
 
-    match write_to_sheet(&access_token, spreadsheet_id, range, jurors).await {
+    match write_to_sheet(&access_token, spreadsheet_id, &sheet_name, jurors).await {
         Ok(_) => {
             ctx.send(CreateReply::default().content("Successfully updated sheet").ephemeral(true)).await?;
         },
