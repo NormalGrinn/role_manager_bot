@@ -1,5 +1,4 @@
 use poise::CreateReply;
-use serenity::utils;
 
 use crate::{database, types, utils::is_host, Context, Error};
 
@@ -16,6 +15,8 @@ pub async fn add_cat(
     category_limit: u64,
     #[description = "What is the type of the category"]
     category_type: types::CategoryType,
+    #[description = "The ID of the category host role"]
+    cat_host_string: String,
 ) -> Result<(), Error> {
     // Check if the user executing the command is a host
     if !is_host(&ctx, ctx.author()).await? {return Ok(())}
@@ -23,8 +24,11 @@ pub async fn add_cat(
     let role_id: u64 = role_id_string
     .parse()
     .map_err(|_| poise::serenity_prelude::Error::Other("Invalid role ID".into()))?;
+    let category_host: u64 = cat_host_string
+    .parse()
+    .map_err(|_| poise::serenity_prelude::Error::Other("Invalid host role ID".into()))?;
 
-    let cat =  types::Category { role_id, category_name, is_open, category_limit, category_type };
+    let cat =  types::Category { role_id, category_name, is_open, category_limit, category_type, category_host };
 
     match database::add_cat(&cat).await {
         Ok(_) => {

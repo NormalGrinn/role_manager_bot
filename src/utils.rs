@@ -7,7 +7,7 @@ use reqwest::Client;
 use serde_json::{json, Value};
 use ::serenity::all::RoleId;
 
-use crate::{database, types::{self, Category, CategoryType, CategoryWithJurors, Claims, RgbColour}, Context};
+use crate::{database, types::{Category, CategoryType, CategoryWithJurors, Claims, RgbColour}, Context};
 
 pub async fn is_host(ctx: &Context<'_>, user: &serenity::User) -> Result<bool, serenity::Error>  {
     let guild_id_int: u64 = env::var("GUILD_ID")
@@ -59,15 +59,23 @@ pub async fn get_cats_with_users(ctx: &Context<'_>) -> Result<Vec<CategoryWithJu
 
     let mut jurors_map: std::collections::HashMap<RoleId, Vec<String>> = std::collections::HashMap::new();
 
-    for m in members {
-        let display_name = m.display_name().to_string();
+for m in members {
+    let display_name = m.display_name().to_string();
+    let member_roles: std::collections::HashSet<RoleId> = m.roles.iter().cloned().collect();
 
-        for role in m.roles {
-            if cat_map.contains_key(&role) {
-                jurors_map.entry(role).or_default().push(display_name.clone());
+    for role in &member_roles {
+        if let Some(category) = cat_map.get(role) {
+            let host_role_id = RoleId::new(category.category_host);
+
+            // Skip the hosts
+            if member_roles.contains(&host_role_id) {
+                continue;
             }
+
+            jurors_map.entry(*role).or_default().push(display_name.clone());
         }
     }
+}
 
     let mut cats_with_jurors: Vec<CategoryWithJurors> = Vec::new();
 

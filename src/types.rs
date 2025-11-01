@@ -22,7 +22,8 @@ pub struct Category {
     pub(crate) category_name: String,
     pub(crate) is_open: bool,
     pub(crate) category_limit: u64,
-    pub(crate) category_type: CategoryType
+    pub(crate) category_type: CategoryType,
+    pub(crate) category_host: u64,
 }
 
 #[derive(Debug)]

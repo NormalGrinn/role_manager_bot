@@ -18,7 +18,6 @@ pub async fn update(
     let jurors: Vec<types::CategoryWithJurors>;
     match utils::get_cats_with_users(&ctx).await {
         Ok(j) => {
-            println!("{:?}", j);
             jurors = j;
         },
         Err(e) => {
@@ -38,11 +37,14 @@ pub async fn update(
         },
     }
 
-    let spreadsheet_id = "1_T8UWoz_78ExJziMEsXF-7QC7q0URxyWVjaG1AxHXHM";
+    let spreadsheet_id: String = env::var("SHEET_ID")
+    .expect("Missing `SHEET_ID` env var, see README for more information.")
+    .parse().expect("Error parsing SHEET_ID to String");
+    // let spreadsheet_id = "1_T8UWoz_78ExJziMEsXF-7QC7q0URxyWVjaG1AxHXHM";
     let sheet_name = env::var("SHEET_NAME")
     .expect("Missing `SHEET_NAME` env var, see README for more information.");
 
-    match write_to_sheet(&access_token, spreadsheet_id, &sheet_name, jurors).await {
+    match write_to_sheet(&access_token, &spreadsheet_id, &sheet_name, jurors).await {
         Ok(_) => {
             ctx.send(CreateReply::default().content("Successfully updated sheet").ephemeral(true)).await?;
         },
