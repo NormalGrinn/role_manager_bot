@@ -326,10 +326,10 @@ pub async fn write_to_sheet(
     sheet_name: &str,
     mut cats_with_jurors: Vec<CategoryWithJurors>,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-    const GENRE_COLOUR: RgbColour = RgbColour { red: 1.0, green: 1.0, blue: 0.8 };
-    const PRODUCTION_COLOUR: RgbColour = RgbColour { red: 1.0, green: 0.8, blue: 0.8 }; 
-    const CHAR_COLOUR: RgbColour = RgbColour { red: 1.0, green: 0.5, blue: 1.0 }; 
-    const MAIN_COLOUR: RgbColour = RgbColour { red: 1.0, green: 0.0, blue: 1.0 }; 
+    const GENRE_COLOUR: RgbColour = RgbColour { red: 0.85, green: 0.30, blue: 0.15 };
+    const PRODUCTION_COLOUR: RgbColour = RgbColour { red: 0.15, green: 0.7, blue: 0.35 }; 
+    const CHAR_COLOUR: RgbColour = RgbColour { red: 0.2, green: 0.35, blue: 0.8 }; 
+    const MAIN_COLOUR: RgbColour = RgbColour { red: 0.45, green: 0.1, blue: 0.75 }; 
 
     let client = Client::new();
 
